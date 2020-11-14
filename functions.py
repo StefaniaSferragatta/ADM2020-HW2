@@ -53,8 +53,6 @@ def avg_time(ds):
     view = view.merge(cart, how='inner', left_index=True, right_index=True, suffixes=('_view', '_cart'))
     cart=0
     view = view.applymap(take_first)
-
-    # From the lists we can pick the first values (max) and the last values(min) and compute the difference in order to see the difference between the incomes in the two months
     view['event_time_view']=pd.to_datetime(view.event_time_view)
     view['event_time_cart']=pd.to_datetime(view.event_time_cart)
     view['interval']=view['event_time_cart'] - view['event_time_view']
@@ -84,8 +82,8 @@ def trend_categories(ds):
 def avg_prod(category,ds):
     #what's the brand whose prices are higher on average?
     avg_price = ds[(ds.event_type == 'purchase') & (ds.category_code == category)].groupby(['brand']).price.mean().sort_values(ascending=False)
-    #plot indicating the average price of the products sold by the brand
     print('Brands in ascending order in category:',avg_price)
+    # plot indicating the average price of the products sold by the brand
     avg_price.plot(kind = "bar",figsize=(17, 14), color="blue",title="Average price of the products sold by the brand");
     plt.title("Average price of the products sold by the brand", fontsize = 18);
     plt.xlabel("Brands", fontsize = 18);
@@ -113,7 +111,7 @@ def incomes(ds1,ds2):
     #computing the price.mean() on the datasets and converting them into a list
     incomes1 = ds1.groupby(['brand']).price.mean().sort_values(ascending=True).tolist()
     incomes2 = ds2.groupby(['brand']).price.mean().sort_values(ascending=True).tolist()
-    # From the lists we can pick the first values (max) and the last values(min) and compute the difference in order to see the difference between the incomes in the two months
+    # From the lists I pick the first values (max) and the last values(min), I compute the difference in order to see the difference between the incomes in the two months
     print('Month1 average price max distance:', incomes1[-1] - incomes1[0])
     print('Month2 average price max distance:', incomes2[-1] - incomes2[0])
     sort_orders = sorted(diff.items(), key=lambda x: x[1])
@@ -167,9 +165,8 @@ def categories(ds):
 def pareto_brand(ds):
     # PER BRAND
     sales_df = ds[ds.event_type == "purchase"].groupby([ds.brand]).price.sum().sort_values(ascending=False)
-    # Made the total sum
     list_sales = sales_df.tolist()
-    tot_sum = sum(list_sales)
+    tot_sum = sum(list_sales)  #Made the total sum
 
     cumulative_sum = [0]
     percentage = [0]
